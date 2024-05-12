@@ -5,12 +5,19 @@ var Helpers = require('./helpers');
  * @constructor
  */
 function JanusError(janusMessage) {
-  Error.captureStackTrace(this, this.constructor);
   this.name = this.constructor.name;
   this.janusMessage = janusMessage;
   var janusError = janusMessage.getError();
   this.message = janusError['reason'];
   this.code = janusError['code'];
+
+  if (Error.captureStackTrace && typeof Error.captureStackTrace === 'function') {
+    // Chrome and NodeJS
+    Error.captureStackTrace(this, this.constructor);
+  } else {
+    // FF, IE 10+ and Safari 6+. Fallback for others
+    this.stack = new Error().stack || '';
+  }
 }
 
 Helpers.inherits(JanusError, Error);
