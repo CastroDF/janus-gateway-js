@@ -16,8 +16,11 @@ function JanusError(janusMessage) {
     Error.captureStackTrace(this, this.constructor);
   } else {
     // Generic way to set the error stack trace.
-    Object.defineProperty(this, 'stack',
-      nonEnumerableProperty(Error(message).stack));
+    Object.defineProperty(this, 'stack', {
+      value: (new Error()).stack,
+      writable: true,
+      configurable: true
+    });
   }
 }
 
